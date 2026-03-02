@@ -1,0 +1,920 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── QB Scheduler Custom Tokens ── */
+:root {
+  --ai-gradient: linear-gradient(135deg, #8B5CF6 0%, #6366F1 50%, #1FB6FF 100%);
+  --ai-gradient-hover: linear-gradient(135deg, #7C3AED 0%, #4F46E5 50%, #009EEB 100%);
+  --ai-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  --ai-shadow-hover: 0 6px 20px rgba(99, 102, 241, 0.4);
+
+  /* Bryntum Stockholm theme grid tokens */
+  --b-grid-line: #e8e9eb;
+  --b-grid-line-major: #d8d9da;
+  --b-header-bg: #f3f4f5;
+  --b-header-border: #e0e1e2;
+  --b-row-border: #eeeff0;
+  --b-row-hover: #f7f8fa;
+  --b-row-even: #fafbfc;
+  --b-resource-col-bg: #f8f9fa;
+  --b-resource-col-border: #e0e1e2;
+  --b-event-radius: 4px;
+  --b-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --now-line: #f0433a;
+}
+
+/* ── Vuetify/Material Design Inspired Components ── */
+
+/* Card surface — used throughout wizard and scheduler */
+.v-card {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid rgba(23, 43, 77, 0.08);
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.v-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Material-style form inputs */
+.v-input {
+  appearance: none;
+  background: #F4F5F7;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #172B4D;
+  transition: all 0.2s ease;
+}
+.v-input:focus {
+  background: white;
+  border-color: rgba(26, 115, 232, 0.3);
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.08);
+  outline: none;
+}
+
+/* Material elevation levels */
+.elevation-1 { box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); }
+.elevation-2 { box-shadow: 0 2px 6px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06); }
+.elevation-3 { box-shadow: 0 4px 12px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06); }
+.elevation-4 { box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06); }
+
+/* Material-style buttons */
+.v-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 6px;
+  padding: 8px 16px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+}
+.v-btn:active {
+  transform: scale(0.98);
+}
+.v-btn-primary {
+  background: #1A73E8;
+  color: white;
+  box-shadow: 0 1px 3px rgba(26, 115, 232, 0.3);
+}
+.v-btn-primary:hover {
+  background: #1557B0;
+  box-shadow: 0 2px 6px rgba(26, 115, 232, 0.4);
+}
+.v-btn-outlined {
+  background: transparent;
+  color: #5E6C84;
+  border: 1px solid #EBECF0;
+}
+.v-btn-outlined:hover {
+  background: #F4F5F7;
+  border-color: rgba(23, 43, 77, 0.2);
+}
+
+/* Material-style select fields */
+.v-select {
+  appearance: none;
+  background: #F4F5F7;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 8px 32px 8px 12px;
+  font-size: 13px;
+  color: #172B4D;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  width: 100%;
+}
+.v-select:focus {
+  background: white;
+  border-color: rgba(26, 115, 232, 0.3);
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.08);
+  outline: none;
+}
+
+/* Material ripple-like hover for interactive surfaces */
+.v-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.v-hover:hover {
+  background: rgba(26, 115, 232, 0.04);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BRYNTUM SCHEDULER PRO — STOCKHOLM THEME
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Timeline Grid Container ── */
+.timeline-grid {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: auto;
+  font-family: var(--b-font-family);
+  background: white;
+}
+
+/* ── Timeline Header ── */
+.b-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: white;
+  border-bottom: 1px solid var(--b-header-border);
+  user-select: none;
+  display: flex;
+  align-items: stretch;
+}
+
+/* Date label row (upper) */
+.b-header-date-row {
+  display: flex;
+  border-bottom: 1px solid var(--b-header-border);
+}
+
+.b-header-date-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  border-right: 1px solid var(--b-header-border);
+  line-height: 1;
+}
+
+/* Hour columns row (lower) */
+.b-header-hour-row {
+  display: flex;
+}
+
+.b-header-hour-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #6b7280;
+  border-right: 1px solid var(--b-grid-line);
+  position: relative;
+  line-height: 1;
+  padding: 11px 0;
+}
+
+.b-header-hour-cell.b-major {
+  border-right-color: var(--b-grid-line-major);
+}
+
+/* Resource column in header — two rows: title+icons, search */
+.b-header-resource-col {
+  position: sticky;
+  left: 0;
+  z-index: 31;
+  background: white;
+  border-right: 2px solid var(--b-resource-col-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 220px;
+  min-width: 220px;
+  flex-shrink: 0;
+  padding: 8px 0;
+}
+
+/* Time axis wrapper — stacks date row + hour row */
+.b-header-timeaxis {
+  flex: 1;
+}
+
+/* ── Bryntum Resource Rows ── */
+.b-row {
+  display: flex;
+  position: relative;
+  min-height: 64px;
+  border-bottom: 1px solid var(--b-row-border);
+  transition: background-color 0.1s ease;
+}
+
+.b-row:nth-child(even) {
+  background: var(--b-row-even);
+}
+
+.b-row:hover {
+  background: var(--b-row-hover);
+}
+
+.b-row-unsaved {
+  box-shadow: inset 3px 0 0 0 #3b82f6;
+}
+
+/* Resource label cell — sticky left, Bryntum style */
+.b-resource-cell {
+  width: 220px;
+  flex-shrink: 0;
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  background: white;
+  border-right: 2px solid var(--b-resource-col-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  transition: background-color 0.1s ease;
+}
+
+.b-row:hover .b-resource-cell {
+  background: var(--b-row-hover);
+}
+
+.b-row:nth-child(even) .b-resource-cell {
+  background: var(--b-row-even);
+}
+
+.b-row:nth-child(even):hover .b-resource-cell {
+  background: var(--b-row-hover);
+}
+
+.b-resource-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.b-resource-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.b-resource-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.b-resource-meta {
+  font-size: 10px;
+  color: #9ca3af;
+  margin-top: 1px;
+}
+
+.b-resource-skills {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 3px;
+}
+
+.b-skill-tag {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: #eff6ff;
+  color: #3b82f6;
+  white-space: nowrap;
+}
+
+/* ── Timeline Area (hourly grid lines) ── */
+.b-timeline-area {
+  position: relative;
+  flex: 1;
+}
+
+.b-grid-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--b-grid-line);
+  pointer-events: none;
+}
+
+.b-grid-line.b-major {
+  background: var(--b-grid-line-major);
+}
+
+/* ── Work Order Event Bars — Bryntum "Tonal" Style ──
+   Tonal = softer semi-transparent background with a colored left accent border
+   and darker text. This is Bryntum's default event rendering style (v7+).  */
+.b-event {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: var(--b-event-radius);
+  padding: 4px 8px;
+  cursor: grab;
+  overflow: hidden;
+  z-index: 10;
+  transition: box-shadow 0.12s ease, transform 0.12s ease, opacity 0.12s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 60px;
+  font-family: var(--b-font-family);
+  font-size: 12px;
+  line-height: 1.35;
+  border-left: 3px solid;
+}
+
+.b-event:hover {
+  z-index: 20;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.b-event:active {
+  cursor: grabbing;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  z-index: 30;
+}
+
+.b-event[data-dragging="true"] {
+  opacity: 0.4;
+}
+
+.b-event-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.b-event-time {
+  font-size: 10px;
+  opacity: 0.7;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.b-event-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 1px;
+  overflow: hidden;
+}
+
+/* ── Tonal Event Colors (Bryntum Stockholm) ── */
+/* Blue — "New" status */
+.b-event-blue {
+  background: rgba(59, 130, 246, 0.12);
+  border-left-color: #3b82f6;
+  color: #1e40af;
+}
+.b-event-blue:hover {
+  background: rgba(59, 130, 246, 0.18);
+}
+
+/* Green — "Scheduled" status */
+.b-event-green {
+  background: rgba(34, 197, 94, 0.12);
+  border-left-color: #16a34a;
+  color: #15803d;
+}
+.b-event-green:hover {
+  background: rgba(34, 197, 94, 0.18);
+}
+
+/* Orange — "In Progress" status */
+.b-event-orange {
+  background: rgba(251, 146, 60, 0.15);
+  border-left-color: #f97316;
+  color: #c2410c;
+}
+.b-event-orange:hover {
+  background: rgba(251, 146, 60, 0.22);
+}
+
+/* Gray — "Complete" / "Cancelled" status */
+.b-event-gray {
+  background: rgba(156, 163, 175, 0.12);
+  border-left-color: #9ca3af;
+  color: #6b7280;
+}
+.b-event-gray:hover {
+  background: rgba(156, 163, 175, 0.18);
+}
+
+/* Red — "Critical" / "Overdue" */
+.b-event-red {
+  background: rgba(239, 68, 68, 0.12);
+  border-left-color: #ef4444;
+  color: #b91c1c;
+}
+.b-event-red:hover {
+  background: rgba(239, 68, 68, 0.18);
+}
+
+/* Indigo — AI optimized */
+.b-event-indigo {
+  background: rgba(99, 102, 241, 0.10);
+  border-left-color: #6366f1;
+  color: #4338ca;
+}
+.b-event-indigo:hover {
+  background: rgba(99, 102, 241, 0.16);
+}
+
+/* Deep orange — high priority accent */
+.b-event-deep-orange {
+  background: rgba(234, 88, 12, 0.12);
+  border-left-color: #ea580c;
+  color: #9a3412;
+}
+.b-event-deep-orange:hover {
+  background: rgba(234, 88, 12, 0.18);
+}
+
+/* ── Priority Indicators (Bryntum style: small dot, not border) ── */
+.b-priority-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.b-priority-1 { background: #ef4444; }
+.b-priority-2 { background: #f97316; }
+.b-priority-3 { background: #6b7280; }
+.b-priority-4 { background: #d1d5db; }
+
+/* ── AI-scheduled indicator ring ── */
+.b-event-ai {
+  box-shadow: 0 0 0 1.5px rgba(99, 102, 241, 0.35);
+}
+
+/* ── Unavailable Block (Bryntum: lighter hatching — legacy) ── */
+.unavailable-block {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    rgba(0, 0, 0, 0.03) 4px,
+    rgba(0, 0, 0, 0.03) 8px
+  );
+  border-left: 1px solid rgba(0, 0, 0, 0.06);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ── Unavailable Event — typed colored blocks ── */
+.unavail-event {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: var(--b-event-radius);
+  z-index: 8;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  font-family: var(--b-font-family);
+  transition: box-shadow 0.12s ease;
+}
+
+.unavail-event:hover {
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.10);
+}
+
+/* ── Now Line (Bryntum: red/coral with triangle marker) ── */
+.now-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--now-line);
+  z-index: 40;
+  pointer-events: none;
+}
+
+.now-line::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -4px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--now-line);
+}
+
+/* ── Skill Match Glow (drag-over states) ── */
+.skill-match-full {
+  background: rgba(34, 197, 94, 0.06) !important;
+}
+
+.skill-match-partial {
+  background: rgba(251, 146, 60, 0.06) !important;
+}
+
+.skill-match-none {
+  background: rgba(156, 163, 175, 0.04) !important;
+}
+
+/* ── Drop Zone States (Bryntum style) ── */
+.drop-zone-valid {
+  background: rgba(34, 197, 94, 0.08) !important;
+  outline: 2px dashed rgba(34, 197, 94, 0.4);
+  outline-offset: -2px;
+}
+
+.drop-zone-warning {
+  background: rgba(251, 146, 60, 0.06) !important;
+  outline: 2px dashed rgba(251, 146, 60, 0.35);
+  outline-offset: -2px;
+}
+
+.drop-zone-blocked {
+  background: rgba(239, 68, 68, 0.06) !important;
+  outline: 2px dashed rgba(239, 68, 68, 0.35);
+  outline-offset: -2px;
+}
+
+/* ── AI Button Gradient ── */
+.ai-btn {
+  background: var(--ai-gradient);
+  color: white;
+  border: none;
+  box-shadow: var(--ai-shadow);
+  transition: all 0.2s ease;
+}
+
+.ai-btn:hover {
+  background: var(--ai-gradient-hover);
+  box-shadow: var(--ai-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.ai-btn:active {
+  transform: translateY(0);
+}
+
+/* ── Confidence Badge ── */
+.confidence-high { color: #00875A; background: rgba(0, 135, 90, 0.1); }
+.confidence-medium { color: #FF991F; background: rgba(255, 153, 31, 0.1); }
+.confidence-low { color: #97A0AF; background: rgba(151, 160, 175, 0.1); }
+
+/* ── Wizard Progress ── */
+.wizard-step-active { color: #1A73E8; }
+.wizard-step-complete { color: #00875A; }
+.wizard-step-pending { color: #97A0AF; }
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in { animation: fadeIn 0.2s ease-out; }
+.animate-slide-up { animation: slideUp 0.3s ease-out; }
+.animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(26, 115, 232, 0.08) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Bryntum Scrollbar Styling ── */
+.timeline-grid::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.timeline-grid::-webkit-scrollbar-track {
+  background: #f3f4f5;
+}
+
+.timeline-grid::-webkit-scrollbar-thumb {
+  background: #c5c7ca;
+  border-radius: 5px;
+  border: 2px solid #f3f4f5;
+}
+
+.timeline-grid::-webkit-scrollbar-thumb:hover {
+  background: #9fa1a4;
+}
+
+.timeline-grid::-webkit-scrollbar-corner {
+  background: #f3f4f5;
+}
+
+/* ── Resize Handle ── */
+.resize-handle {
+  height: 4px;
+  cursor: ns-resize;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.resize-handle:hover {
+  background: rgba(26, 115, 232, 0.2);
+}
+
+/* ── Filter Chip ── */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.filter-chip-inactive {
+  background: white;
+  border-color: rgba(23, 43, 77, 0.15);
+  color: #5E6C84;
+}
+
+.filter-chip-inactive:hover {
+  background: #F4F5F7;
+  border-color: rgba(23, 43, 77, 0.25);
+}
+
+.filter-chip-active {
+  background: rgba(26, 115, 232, 0.08);
+  border-color: rgba(26, 115, 232, 0.4);
+  color: #1A73E8;
+}
+
+/* ── Bryntum Toolbar ── */
+.b-toolbar {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-bottom: 1px solid var(--b-header-border);
+  padding: 6px 12px;
+  gap: 8px;
+  font-family: var(--b-font-family);
+}
+
+.b-toolbar-separator {
+  width: 1px;
+  height: 24px;
+  background: #e5e7eb;
+  margin: 0 4px;
+}
+
+.b-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  background: white;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.b-toolbar-btn:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.b-toolbar-btn:active {
+  background: #f3f4f6;
+}
+
+.b-toolbar-btn-icon {
+  padding: 6px;
+  border: none;
+  background: transparent;
+}
+
+.b-toolbar-btn-icon:hover {
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
+.b-toolbar-btn-active {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #2563eb;
+}
+
+.b-toolbar-btn-active:hover {
+  background: #dbeafe;
+}
+
+/* Bryntum-style segmented control */
+.b-segmented {
+  display: inline-flex;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.b-segmented-btn {
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  background: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-right: 1px solid #e5e7eb;
+}
+
+.b-segmented-btn:last-child {
+  border-right: none;
+}
+
+.b-segmented-btn:hover {
+  background: #f9fafb;
+  color: #374151;
+}
+
+.b-segmented-btn-active {
+  background: #2563eb;
+  color: white;
+}
+
+.b-segmented-btn-active:hover {
+  background: #1d4ed8;
+  color: white;
+}
+
+/* ── Unassigned Panel (Bryntum "Task Board" style) ── */
+.b-unassigned-panel {
+  border-left: 2px solid var(--b-resource-col-border);
+  background: #f9fafb;
+}
+
+.b-unassigned-header {
+  background: white;
+  border-bottom: 1px solid var(--b-header-border);
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.b-unassigned-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 8px 10px;
+  cursor: grab;
+  transition: all 0.15s ease;
+  border-left: 3px solid;
+}
+
+.b-unassigned-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-color: #d1d5db;
+}
+
+.b-unassigned-card:active {
+  cursor: grabbing;
+}
+
+/* ── Pinned event ── */
+.b-event-pinned {
+  box-shadow: inset 0 0 0 1.5px rgba(107, 114, 128, 0.35);
+}
+
+/* ── Non-Working Day ── */
+.b-nonworking-day {
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    rgba(239, 68, 68, 0.06) 4px,
+    rgba(239, 68, 68, 0.06) 8px
+  ) !important;
+}
+
+.b-nonworking-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  color: #ef4444;
+  opacity: 0.7;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+/* ── Context Menu ── */
+.context-menu {
+  position: fixed;
+  z-index: 60;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(23, 43, 77, 0.12);
+  padding: 4px 0;
+  min-width: 180px;
+  animation: fadeIn 0.15s ease-out;
+}
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #344563;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.1s;
+  text-align: left;
+}
+.context-menu-item:hover {
+  background: #f4f5f7;
+}
+.context-menu-item-danger:hover {
+  background: #fff1f0;
+  color: #de350b;
+}
+.context-menu-item-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.context-menu-item-disabled:hover {
+  background: none;
+}
+.context-menu-separator {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 4px 0;
+}
