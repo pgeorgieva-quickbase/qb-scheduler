@@ -4,6 +4,7 @@ import {
   FileText, Calendar, Receipt, Building2,
 } from 'lucide-react'
 import clsx from 'clsx'
+import { useNavigationStore } from '../../stores/navigationStore'
 
 const primaryNav = [
   { key: 'home', icon: Home, label: 'App home' },
@@ -21,6 +22,10 @@ const tables = [
 
 export default function QuickbaseSidebar() {
   const [tablesOpen, setTablesOpen] = useState(true)
+  const currentPage = useNavigationStore(s => s.currentPage)
+  const navigateTo = useNavigationStore(s => s.navigateTo)
+
+  const activeTableKey = currentPage === 'availability' ? 'availability' : 'work-orders'
 
   return (
     <aside className="w-[220px] flex-shrink-0 bg-white border-r border-surface-active/60 flex flex-col h-full overflow-hidden">
@@ -67,15 +72,22 @@ export default function QuickbaseSidebar() {
           <div className="flex-1 min-h-0 overflow-y-auto space-y-0.5 pb-2">
             {tables.map(table => {
               const Icon = table.icon
+              const isActive = table.key === activeTableKey
               return (
                 <button
                   key={table.key}
+                  onClick={() => {
+                    if (table.key === 'availability') navigateTo('availability')
+                    else if (table.key === 'work-orders') navigateTo('scheduler')
+                  }}
                   className={clsx(
                     'flex items-center gap-2.5 w-full px-2.5 py-[6px] rounded text-[13px] font-medium transition-colors',
-                    'text-ink-secondary hover:bg-surface-hover hover:text-ink-primary',
+                    isActive
+                      ? 'bg-qb-blue-light text-qb-blue'
+                      : 'text-ink-secondary hover:bg-surface-hover hover:text-ink-primary',
                   )}
                 >
-                  <Table2 size={13} className="flex-shrink-0 text-ink-tertiary" />
+                  <Table2 size={13} className={clsx('flex-shrink-0', isActive ? 'text-qb-blue' : 'text-ink-tertiary')} />
                   <span className="truncate flex-1 text-left">{table.label}</span>
                 </button>
               )
