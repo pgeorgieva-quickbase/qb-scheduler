@@ -8,11 +8,6 @@ import clsx from 'clsx'
 const AVAILABILITY_COLORS = {
   Available: { bg: 'bg-emerald-100', border: 'border-emerald-300', text: 'text-emerald-700' },
   Unavailable: { bg: 'bg-red-100', border: 'border-red-300', text: 'text-red-700' },
-  Vacation: { bg: 'bg-amber-100', border: 'border-amber-300', text: 'text-amber-700' },
-  Sick: { bg: 'bg-rose-100', border: 'border-rose-300', text: 'text-rose-700' },
-  Training: { bg: 'bg-blue-100', border: 'border-blue-300', text: 'text-blue-700' },
-  Personal: { bg: 'bg-purple-100', border: 'border-purple-300', text: 'text-purple-700' },
-  'On-Call': { bg: 'bg-cyan-100', border: 'border-cyan-300', text: 'text-cyan-700' },
 }
 
 function getEventColor(event) {

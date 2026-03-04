@@ -4,9 +4,7 @@ import { format, parseISO } from 'date-fns'
 import { useAvailabilityStore } from '../../stores/availabilityStore'
 import { useSchedulerStore } from '../../stores/schedulerStore'
 
-const AVAILABILITY_TYPES = [
-  'Available', 'Unavailable', 'Vacation', 'Sick', 'Training', 'Personal', 'On-Call',
-]
+const AVAILABILITY_TYPES = ['Available', 'Unavailable']
 
 export default function AvailabilityEditor() {
   const { editingEvent, closeEditor, saveEvent, removeEvent, loading } = useAvailabilityStore()
@@ -107,40 +105,27 @@ export default function AvailabilityEditor() {
             />
           </div>
 
-          {/* All day toggle */}
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.allDay}
-              onChange={(e) => update('allDay', e.target.checked)}
-              className="rounded border-gray-300 accent-blue-600"
-            />
-            <span className="text-[13px] text-gray-700">All day</span>
-          </label>
-
-          {/* Time range (if not all day) */}
-          {!form.allDay && (
-            <div className="flex items-center gap-2">
-              <div className="flex-1">
-                <label className="text-[12px] font-medium text-gray-600 block mb-1">Start time</label>
-                <input
-                  type="time"
-                  value={form.startTime}
-                  onChange={(e) => update('startTime', e.target.value)}
-                  className="w-full border border-gray-200 rounded-md px-3 py-2 text-[13px] text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-200 focus:border-blue-300"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="text-[12px] font-medium text-gray-600 block mb-1">End time</label>
-                <input
-                  type="time"
-                  value={form.endTime}
-                  onChange={(e) => update('endTime', e.target.value)}
-                  className="w-full border border-gray-200 rounded-md px-3 py-2 text-[13px] text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-200 focus:border-blue-300"
-                />
-              </div>
+          {/* Time range */}
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <label className="text-[12px] font-medium text-gray-600 block mb-1">Start time</label>
+              <input
+                type="time"
+                value={form.startTime}
+                onChange={(e) => update('startTime', e.target.value)}
+                className="w-full border border-gray-200 rounded-md px-3 py-2 text-[13px] text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-200 focus:border-blue-300"
+              />
             </div>
-          )}
+            <div className="flex-1">
+              <label className="text-[12px] font-medium text-gray-600 block mb-1">End time</label>
+              <input
+                type="time"
+                value={form.endTime}
+                onChange={(e) => update('endTime', e.target.value)}
+                className="w-full border border-gray-200 rounded-md px-3 py-2 text-[13px] text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-200 focus:border-blue-300"
+              />
+            </div>
+          </div>
 
         </div>
 

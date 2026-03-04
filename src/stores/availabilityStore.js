@@ -149,7 +149,7 @@ export const useAvailabilityStore = create((set, get) => ({
         allDay: true,
         recurring: 'None',
         notes: reason,
-        availabilityType: 'Vacation',
+        availabilityType: 'Unavailable',
       })
       d = addDays(d, 1)
     }
