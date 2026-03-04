@@ -119,29 +119,27 @@ export default function TechnicianMappingStep() {
         </div>
       </div>
 
-      {/* Manage Availability — only visible after initial setup */}
-      {useWizardStore.getState().isComplete && (
-        <div className="v-card flex items-center justify-between">
-          <div>
-            <h3 className="text-[13px] font-semibold text-ink-primary mb-0.5">Availability Schedule</h3>
-            <p className="text-[11px] text-ink-tertiary">
-              View and manage technician working hours, time off, and recurring schedules.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              useWizardStore.getState().closeWizard()
-              useNavigationStore.getState().navigateTo('availability')
-            }}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-md border border-qb-blue/20 bg-qb-blue-light text-qb-blue text-[12px] font-semibold hover:bg-qb-blue/10 transition-colors flex-shrink-0"
-          >
-            <CalendarDays size={14} />
-            Manage Availability
-            <ExternalLink size={11} className="opacity-50" />
-          </button>
+      {/* Manage Availability */}
+      <div className="v-card flex items-center justify-between">
+        <div>
+          <h3 className="text-[13px] font-semibold text-ink-primary mb-0.5">Availability Schedule</h3>
+          <p className="text-[11px] text-ink-tertiary">
+            View and manage technician working hours, time off, and recurring schedules.
+          </p>
         </div>
-      )}
+        <button
+          type="button"
+          onClick={() => {
+            useWizardStore.getState().closeWizard()
+            useNavigationStore.getState().navigateTo('availability')
+          }}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-md border border-qb-blue/20 bg-qb-blue-light text-qb-blue text-[12px] font-semibold hover:bg-qb-blue/10 transition-colors flex-shrink-0"
+        >
+          <CalendarDays size={14} />
+          Manage Availability
+          <ExternalLink size={11} className="opacity-50" />
+        </button>
+      </div>
 
       {/* Additional fields */}
       <div className="v-card">
